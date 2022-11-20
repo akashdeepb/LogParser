@@ -5,17 +5,16 @@ import Result from '../Result/Result';
 import './Uploader.css';
 
 export default function Uploader() {
-    const [selectedFile, setSelectedFile] = useState(null);
     const [uploadState, setUploadState] = useState('default');
     const [resultText, setResultText] = useState('');
     const [resultType, setResultType] = useState('err');
 
-    const uploadFile = () => {
+    const uploadFile = (file) => {
         const formData = new FormData();
         formData.append(
             "logfile",
-            selectedFile,
-            selectedFile.name
+            file,
+            file.name
         );
         setUploadState('in-progress');
         axios.post('http://localhost:3001/upload', formData)
@@ -24,7 +23,7 @@ export default function Uploader() {
                 if (response.data.errors.length > 0) {
                     setResultText(JSON.stringify(response.data.errors));
                 } else {
-                    setResultText('There were no error statements in the logfile');
+                    setResultText('There were no error/warn statements in the logfile');
                 }
             })
             .catch(err => {
@@ -42,7 +41,6 @@ export default function Uploader() {
                 <p style={{ textDecoration: 'underline' }}>Step 1: Please Upload the Log File</p>
                 <UploadButton 
                     onUploadFile={uploadFile}
-                    setFile={setSelectedFile} 
                     uploadState={uploadState} 
                 />
                 {
