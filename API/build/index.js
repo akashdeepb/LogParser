@@ -4,15 +4,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const multer_1 = __importDefault(require("multer"));
+const cors_1 = __importDefault(require("cors"));
+const path_1 = __importDefault(require("path"));
 const LogParser_1 = require("./LogParser");
 const app = (0, express_1.default)();
+const upload = (0, multer_1.default)({ dest: './uploads/' });
+app.use((0, cors_1.default)());
 const port = process.env.PORT || 3001;
-const logEx = '2044-08-09T02:12:51.253Z-info-{"transactionId":"9abc55bcb2-807b-4361-9dbe-aa88b1b2e978","details":"Service is started"}';
-const errEx = '2044-08-09T02:12:51.253Z-info-{"transactionId":"9abc55bcb2-807b-4361-9dbe-aa88b1b2e978","details":"Service is started","err":"Not Found"}';
-app.use('/', (req, res) => {
-    let logParser = new LogParser_1.LogParser();
-    let result = logParser.parseErrors(errEx);
-    res.status(200).json({ message: result });
+app.use('/upload', upload.single('logfile'), (req, res) => {
+    var _a;
+    const filename = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
+    const filepath = path_1.default.resolve('./uploads/' + filename);
+    const logParser = new LogParser_1.LogParser();
+    logParser.getDataFromLogFile(filepath)
+        .then(data => {
+        console.log(data);
+        const errors = logParser.parseErrors(data);
+        res.status(200).json({ errors });
+    })
+        .catch(err => {
+        console.log(err);
+        res.status(500).json({ error: "Error Parsing File" });
+    });
 });
 app.listen(port, () => {
     console.log(`Backend for Beanstalk Assignment running @${port}`);

@@ -1,6 +1,17 @@
-export class LogParser {
-    LogParser() {
+import fs from 'fs';
 
+export class LogParser {
+    Constructor () {
+        // Default Constructor
+    }
+
+    getDataFromLogFile(filepath: string) {
+        return new Promise((resolve, reject) => {
+            fs.readFile(filepath, { encoding: 'utf-8' }, (err, data) => {
+                if(err) reject(null);
+                resolve(data);
+            });
+        });
     }
 
     getLogTime(text: string) {
@@ -27,14 +38,17 @@ export class LogParser {
 
     parseErrors(text: string) {
         let errors: Object[] = [];
-        if(text.includes("err")) {
-            const logtime = this.getLogTime(text);
-            const logtype = this.getLogType(text);
-            const details = JSON.parse(text.slice(logtime.length + logtype.length + 2));
-            const timestamp = new Date(logtime).getTime();
-            const transactionId = details.transactionId;
-            const err = details.err;
-            errors.push(this.createErrorLog(timestamp, logtype, transactionId, err))
+        const lines = text.split("\n");
+        for(let i=0;i<lines.length;i++) {
+            if(lines[i].includes("err")) {
+                const logtime = this.getLogTime(lines[i]);
+                const logtype = this.getLogType(lines[i]);
+                const details = JSON.parse(lines[i].slice(logtime.length + logtype.length + 2));
+                const timestamp = new Date(logtime).getTime();
+                const transactionId = details.transactionId;
+                const err = details.err;
+                errors.push(this.createErrorLog(timestamp, logtype, transactionId, err))
+            }
         }
         return errors;
     }
