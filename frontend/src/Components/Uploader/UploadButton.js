@@ -6,13 +6,13 @@ export default function UploadButton({ onUploadFile, uploadState='default' }) {
         onUploadFile(event.target.files[0]);
     }
     let message = <p>Click or Drop your file here</p>;
-    let imgUrl = "https://cdn-icons-png.flaticon.com/512/2716/2716054.png";
+    let imgUrl = "https://cdn-icons-png.flaticon.com/512/2716/2716054.png";      // Image Attribution: Upload icon created by bukeIcon - Flaticon
 
     if (uploadState === 'in-progress') {
         message = <p>Uploading Your File</p>;
     } else if (uploadState === 'complete') {
         message = <p>File Uploaded. Click to Upload another file</p>
-        imgUrl = "https://cdn-icons-png.flaticon.com/512/992/992481.png";
+        imgUrl = "https://cdn-icons-png.flaticon.com/512/992/992481.png";       // Image Attribution: Tick icon created by dmitri13 - Flaticon
     }
 
     return (
