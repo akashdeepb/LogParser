@@ -1,3 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Overpass&display=swap');
+
+.App {
+  font-family: 'Overpass', sans-serif;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

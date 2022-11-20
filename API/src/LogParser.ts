@@ -40,9 +40,9 @@ export class LogParser {
         let errors: Object[] = [];
         const lines = text.split("\n");
         for(let i=0;i<lines.length;i++) {
-            if(lines[i].includes("err")) {
+            const logtype = this.getLogType(lines[i]);
+            if(logtype === 'warn' || logtype === 'error') {
                 const logtime = this.getLogTime(lines[i]);
-                const logtype = this.getLogType(lines[i]);
                 const details = JSON.parse(lines[i].slice(logtime.length + logtype.length + 2));
                 const timestamp = new Date(logtime).getTime();
                 const transactionId = details.transactionId;
